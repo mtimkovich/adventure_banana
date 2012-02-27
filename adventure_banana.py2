@@ -20,20 +20,16 @@ class Banana(pygame.sprite.Sprite):
 
         if self.good != 0:
             self.image.fill(yellow)
+            self.isgood = True
         else:
             self.image.fill(brown)
+            self.isgood = False
 
         self.rect.x = screen_width - self.width
         self.rect.y = screen_height / 3
 
-        self.vel_x = random.randint(5, 30)
+        self.vel_x = random.randint(10, 30)
         self.vel_y = random.randint(-20, -10)
-
-    def is_good(self):
-        if self.good == 0:
-            return False
-        else:
-            return True
 
     def update(self):
         self.rect.x -= self.vel_x
@@ -60,14 +56,18 @@ class Bucket(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y - self.height
 
-    def jump(self, pos):
-        self.vel_y = -10
+    def jump(self):
+        if self.rect.bottom == screen_height:
+            self.vel_y = -20
 
     def update(self):
         self.rect.y += self.vel_y
 
-        if self.vel_y > 0:
+        if self.rect.bottom < screen_height:
             self.vel_y += GRAVITY
+        else:
+            self.rect.bottom = screen_height
+            self.vel_y = 0
 
 # Colors
 black = (0, 0, 0)
@@ -78,7 +78,7 @@ yellow = (255, 255, 0)
 red = (255, 0, 0)
 blue = (0, 0, 255)
 
-GRAVITY = 2
+GRAVITY = 3
 
 pygame.init()
 
@@ -99,7 +99,7 @@ buckets = []
 
 start = 100
 for i in range(0, 3):
-    buckets.append(Bucket(start + start*i*2, screen_height))
+    buckets.append(Bucket(start + 2*start*i, screen_height))
     all_sprites.add(buckets[i])
 
 banana = Banana()
@@ -110,11 +110,17 @@ while done == False:
         if event.type == pygame.QUIT:
             done = True
         if event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
+            mousex, mousey = pygame.mouse.get_pos()
+
+            if mousey >= buckets[0].rect.top:
+                for bucket in buckets:
+                    if mousex >= bucket.rect.left and mousex <= bucket.rect.right:
+                        bucket.jump()
+                        break
 
     screen.fill(white)
 
-    banana.update()
+    all_sprites.update()
 
     all_sprites.draw(screen)
 
