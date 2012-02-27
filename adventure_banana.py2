@@ -6,29 +6,40 @@ class Banana(pygame.sprite.Sprite):
     width = 45
     height = 45
 
-    acc_y = 2
-    
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([self.width, self.height])
-        self.image.fill(yellow)
 
         self.rect = self.image.get_rect()
 
         self.reset()
 
     def reset(self):
+        # There is a 1 in 10 chance of a bad banana
+        self.good = random.randint(0, 10)
+
+        if self.good != 0:
+            self.image.fill(yellow)
+        else:
+            self.image.fill(brown)
+
         self.rect.x = screen_width - self.width
         self.rect.y = screen_height / 3
 
         self.vel_x = random.randint(5, 30)
         self.vel_y = random.randint(-20, -10)
 
+    def is_good(self):
+        if self.good == 0:
+            return False
+        else:
+            return True
+
     def update(self):
         self.rect.x -= self.vel_x
         self.rect.y += self.vel_y
 
-        self.vel_y += self.acc_y
+        self.vel_y += GRAVITY
 
         if self.rect.x < 0 or self.rect.y > screen_height:
             self.reset()
@@ -36,6 +47,8 @@ class Banana(pygame.sprite.Sprite):
 class Bucket(pygame.sprite.Sprite):
     width = 100
     height = 150
+
+    vel_y = 0
     
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -47,21 +60,25 @@ class Bucket(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y - self.height
 
-    def get_bounds(self):
-        return (self.rect.topleft, self.rect.bottomright)
-
     def jump(self, pos):
-        if pos[0] >= self.rect.left and pos[0] <= self.rect.right:
-            if pos[1] >= self.rect.top and pos[1] <= self.rect.bottom:
-                print "jump"
+        self.vel_y = -10
+
+    def update(self):
+        self.rect.y += self.vel_y
+
+        if self.vel_y > 0:
+            self.vel_y += GRAVITY
 
 # Colors
 black = (0, 0, 0)
+brown = (99, 66, 33)
 white = (255, 255, 255)
 green = (0, 255, 0)
 yellow = (255, 255, 0)
 red = (255, 0, 0)
 blue = (0, 0, 255)
+
+GRAVITY = 2
 
 pygame.init()
 
@@ -78,8 +95,12 @@ clock = pygame.time.Clock()
 
 all_sprites = pygame.sprite.RenderPlain()
 
-bucket = Bucket(100, screen_height)
-all_sprites.add(bucket)
+buckets = []
+
+start = 100
+for i in range(0, 3):
+    buckets.append(Bucket(start + start*i*2, screen_height))
+    all_sprites.add(buckets[i])
 
 banana = Banana()
 all_sprites.add(banana)
@@ -90,8 +111,6 @@ while done == False:
             done = True
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
-
-            bucket.jump(pos)
 
     screen.fill(white)
 
