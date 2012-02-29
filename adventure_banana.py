@@ -71,6 +71,8 @@ class Bucket(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y - self.height
 
+        self.hitbox = pygame.Rect(self.rect.left, self.rect.top, self.width, self.height/3)
+
     def jump(self):
         if self.rect.bottom == SCREEN_HEIGHT:
             self.vel_y = -20
@@ -86,6 +88,7 @@ class Bucket(pygame.sprite.Sprite):
             self.vel_y = 0
             self.is_jumping = False
 
+        self.hitbox.y = self.rect.y
 
 class Game():
     def start(self):
@@ -101,6 +104,7 @@ class Game():
         clock = pygame.time.Clock()
 
         score = 0
+        combo = 0
 
         all_sprites = pygame.sprite.RenderPlain()
         all_buckets = pygame.sprite.RenderPlain()
@@ -134,7 +138,7 @@ class Game():
             all_buckets.update(banana)
 
             for bucket in buckets:
-                collide = pygame.sprite.collide_rect(banana, bucket)
+                collide = pygame.Rect.colliderect(banana.rect, bucket.hitbox)
 
                 if collide:
                     if bucket.is_jumping:
