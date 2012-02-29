@@ -118,7 +118,7 @@ class Game():
 
                     if mousey >= buckets[0].rect.top:
                         for bucket in buckets:
-                            if mousex >= bucket.rect.left and mousex <= bucket.rect.right:
+                            if bucket.rect.collidepoint(mousex, mousey):
                                 bucket.jump()
                                 break
 
