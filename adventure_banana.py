@@ -34,10 +34,10 @@ class Banana(pygame.sprite.Sprite):
 
         if self.good != 0:
             self.image.fill(YELLOW)
-            self.isgood = True
+            self.is_good = True
         else:
             self.image.fill(BROWN)
-            self.isgood = False
+            self.is_good = False
 
         self.rect.x = SCREEN_WIDTH - self.width
         self.rect.y = SCREEN_HEIGHT / 3
@@ -45,7 +45,7 @@ class Banana(pygame.sprite.Sprite):
         self.vel_x = random.randint(10, 30)
         self.vel_y = random.randint(-20, -10)
 
-    def update(self):
+    def update(self, buckets):
         self.rect.x -= self.vel_x
         self.rect.y += self.vel_y
 
@@ -59,6 +59,7 @@ class Bucket(pygame.sprite.Sprite):
     height = 150
 
     vel_y = 0
+    is_jumping = False
     
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -73,8 +74,9 @@ class Bucket(pygame.sprite.Sprite):
     def jump(self):
         if self.rect.bottom == SCREEN_HEIGHT:
             self.vel_y = -20
+            self.is_jumping = True
 
-    def update(self):
+    def update(self, banana):
         self.rect.y += self.vel_y
 
         if self.rect.bottom < SCREEN_HEIGHT:
@@ -82,6 +84,7 @@ class Bucket(pygame.sprite.Sprite):
         else:
             self.rect.bottom = SCREEN_HEIGHT
             self.vel_y = 0
+            self.is_jumping = False
 
 
 class Game():
@@ -97,13 +100,17 @@ class Game():
 
         clock = pygame.time.Clock()
 
+        score = 0
+
         all_sprites = pygame.sprite.RenderPlain()
+        all_buckets = pygame.sprite.RenderPlain()
 
         buckets = []
 
         start = 100
         for i in range(0, 3):
             buckets.append(Bucket(start + 2*start*i, SCREEN_HEIGHT))
+            all_buckets.add(buckets[i])
             all_sprites.add(buckets[i])
 
         banana = Banana()
@@ -114,17 +121,30 @@ class Game():
                 if event.type == pygame.QUIT:
                     done = True
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    mousex, mousey = pygame.mouse.get_pos()
+                    pos = pygame.mouse.get_pos()
 
-                    if mousey >= buckets[0].rect.top:
-                        for bucket in buckets:
-                            if bucket.rect.collidepoint(mousex, mousey):
-                                bucket.jump()
-                                break
+                    for bucket in buckets:
+                        if bucket.rect.collidepoint(pos):
+                            bucket.jump()
+                            break
 
             screen.fill(WHITE)
 
-            all_sprites.update()
+            banana.update(buckets)
+            all_buckets.update(banana)
+
+            for bucket in buckets:
+                collide = pygame.sprite.collide_rect(banana, bucket)
+
+                if collide:
+                    if bucket.is_jumping:
+                        if banana.is_good:
+                            score += 20
+                        else:
+                            score -= 20
+
+                        banana.reset()
+                        print score
 
             all_sprites.draw(screen)
 
