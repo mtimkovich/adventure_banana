@@ -13,9 +13,11 @@ BLUE = (0, 0, 255)
 
 GRAVITY = 3
 
+#Screen size
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
+#This code sucks donkey cock
 class Banana(pygame.sprite.Sprite):
     width = 45
     height = 45
@@ -53,7 +55,7 @@ class Banana(pygame.sprite.Sprite):
 
         if self.rect.x < 0 or self.rect.y > SCREEN_HEIGHT:
             self.reset()
-
+ #Bucket
 class Bucket(pygame.sprite.Sprite):
     width = 100
     height = 150
