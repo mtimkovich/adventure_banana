@@ -14,11 +14,9 @@ BLUE = (0, 0, 255)
 # X100e screen height = .144446 m
 GRAVITY = 3
 
-#Screen size
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-#This code sucks donkey cock
 class Banana(pygame.sprite.Sprite):
     width = 45
     height = 45
@@ -65,7 +63,6 @@ class Banana(pygame.sprite.Sprite):
 
         return combo
 
- #Bucket
 class Bucket(pygame.sprite.Sprite):
     width = 100
     height = 150
