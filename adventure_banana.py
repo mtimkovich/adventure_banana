@@ -11,6 +11,7 @@ YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
+# X100e screen height = .144446 m
 GRAVITY = 3
 
 SCREEN_WIDTH = 800
@@ -30,7 +31,8 @@ class Banana(pygame.sprite.Sprite):
 
     def reset(self):
         # There is a 1 in 10 chance of a bad banana
-        self.good = random.randint(0, 10)
+#         self.good = random.randint(0, 10)
+        self.good = random.randint(0, 2)
 
         if self.good != 0:
             self.image.fill(YELLOW)
@@ -42,17 +44,24 @@ class Banana(pygame.sprite.Sprite):
         self.rect.x = SCREEN_WIDTH - self.width
         self.rect.y = SCREEN_HEIGHT / 3
 
-        self.vel_x = random.randint(10, 30)
-        self.vel_y = random.randint(-20, -10)
+#         self.vel_x = random.randint(10, 30)
+#         self.vel_y = random.randint(-20, -10)
+        self.vel_x = 30
+        self.vel_y = -20
 
-    def update(self, buckets):
+    def update(self, buckets, combo):
         self.rect.x -= self.vel_x
         self.rect.y += self.vel_y
 
         self.vel_y += GRAVITY
 
         if self.rect.x < 0 or self.rect.y > SCREEN_HEIGHT:
+            if self.is_good:
+                combo = 0
+
             self.reset()
+
+        return combo
 
 class Bucket(pygame.sprite.Sprite):
     width = 100
@@ -88,9 +97,10 @@ class Bucket(pygame.sprite.Sprite):
             self.vel_y = 0
             self.is_jumping = False
 
-        self.hitbox.y = self.rect.y
+        self.hitbox.top = self.rect.top
 
 class Game():
+
     def start(self):
 
         pygame.init()
@@ -134,7 +144,7 @@ class Game():
 
             screen.fill(WHITE)
 
-            banana.update(buckets)
+            combo = banana.update(buckets, combo)
             all_buckets.update(banana)
 
             for bucket in buckets:
@@ -143,14 +153,26 @@ class Game():
                 if collide:
                     if bucket.is_jumping:
                         if banana.is_good:
-                            score += 20
+                            combo += 1
+                            score += 2 * combo
                         else:
-                            score -= 20
+                            combo = 0
 
                         banana.reset()
-                        print score
 
             all_sprites.draw(screen)
+
+            font = pygame.font.Font(None, 30)
+
+            if combo >= 0:
+                text = font.render("Combo: " + str(combo), True, RED)
+                screen.blit(text, [SCREEN_WIDTH/3, SCREEN_HEIGHT/3])
+
+            font = pygame.font.Font(None, 50)
+
+            # Print the score on to the screen
+            text = font.render("Score: " + str(score), True, BLACK)
+            screen.blit(text, [20, 20])
 
             clock.tick(20)
 
