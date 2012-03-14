@@ -11,8 +11,7 @@ YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
-# X100e screen height = .144446 m
-GRAVITY = 3
+GRAVITY = 2
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -42,11 +41,11 @@ class Banana(pygame.sprite.Sprite):
             self.is_good = False
 
         self.rect.x = SCREEN_WIDTH - self.width
-        self.rect.y = SCREEN_HEIGHT / 3
+        self.rect.y = SCREEN_HEIGHT / 1.8
 
 #         self.vel_x = random.randint(10, 30)
 #         self.vel_y = random.randint(-20, -10)
-        self.vel_x = 30
+        self.vel_x = 25
         self.vel_y = -20
 
     def update(self, buckets, combo):
@@ -69,6 +68,8 @@ class Bucket(pygame.sprite.Sprite):
 
     vel_y = 0
     is_jumping = False
+
+    points = 10
     
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -82,9 +83,12 @@ class Bucket(pygame.sprite.Sprite):
 
         self.hitbox = pygame.Rect(self.rect.left, self.rect.top, self.width, self.height/3)
 
+        self.value = Bucket.points
+        Bucket.points += 10
+
     def jump(self):
         if self.rect.bottom == SCREEN_HEIGHT:
-            self.vel_y = -20
+            self.vel_y = -30
             self.is_jumping = True
 
     def update(self, banana):
@@ -121,9 +125,9 @@ class Game():
 
         buckets = []
 
-        start = 100
+        start = 75
         for i in range(0, 3):
-            buckets.append(Bucket(start + 2*start*i, SCREEN_HEIGHT))
+            buckets.append(Bucket(start/2 + 2*start*i, SCREEN_HEIGHT))
             all_buckets.add(buckets[i])
             all_sprites.add(buckets[i])
 
@@ -154,7 +158,7 @@ class Game():
                     if bucket.is_jumping:
                         if banana.is_good:
                             combo += 1
-                            score += 2 * combo
+                            score += bucket.value + 2 * combo
                         else:
                             combo = 0
 
