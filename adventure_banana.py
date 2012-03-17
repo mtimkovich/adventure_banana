@@ -45,19 +45,19 @@ class Banana(pygame.sprite.Sprite):
         self.vel_x = 25
         self.vel_y = -20
 
-    def update(self, combo):
+    def update(self):
         self.rect.x -= self.vel_x
         self.rect.y += self.vel_y
 
         self.vel_y += GRAVITY
 
         if self.rect.x < 0 or self.rect.y > SCREEN_HEIGHT:
-            if self.is_good:
-                combo = 0
-
             self.kill()
 
-        return combo
+            if self.is_good:
+                return False
+
+        return True
 
 class Bucket(pygame.sprite.Sprite):
     width = 100
@@ -125,6 +125,8 @@ class Game():
         for i in range(0, 3):
             buckets.add(Bucket(start/2 + 2*start*i, SCREEN_HEIGHT))
 
+        tick = 0
+
         # Main game loop
         while done == False:
             for event in pygame.event.get():
@@ -140,20 +142,31 @@ class Game():
 
             screen.fill(WHITE)
 
-            combo = bananas.update(combo)
+            if tick == 0:
+                banana = Banana()
+                bananas.add(banana)
+
+            for banana in bananas:
+                r = banana.update()
+
+                if r == False:
+                    combo = 0
+
             buckets.update()
 
-#             for bucket in buckets:
-#                 # this will need to be updated
-#                 collide = pygame.Rect.colliderect(banana.rect, bucket.hitbox)
-# 
-#                 if collide:
-#                     if bucket.is_jumping:
-#                         if banana.is_good:
-#                             combo += 1
-#                             score += bucket.value + 2 * combo
-#                         else:
-#                             combo = 0
+            for bucket in buckets:
+                for banana in bananas:
+                    collide = pygame.Rect.colliderect(banana.rect, bucket.hitbox)
+
+                    if collide:
+                        if bucket.is_jumping:
+                            if banana.is_good:
+                                banana.kill()
+
+                                combo += 1
+                                score += bucket.value + 2 * combo
+                            else:
+                                combo = 0
 
             buckets.draw(screen)
             bananas.draw(screen)
@@ -173,6 +186,11 @@ class Game():
             clock.tick(20)
 
             pygame.display.flip()
+
+            tick += 1
+
+            if tick > 15:
+                tick = 0
 
         pygame.quit()
 
