@@ -26,7 +26,6 @@ class Banana(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
 
-
         # There is a 1 in 10 chance of a bad banana
 #         self.good = random.randint(0, 10)
         self.good = random.randint(0, 2)
@@ -46,7 +45,7 @@ class Banana(pygame.sprite.Sprite):
         self.vel_x = 25
         self.vel_y = -20
 
-    def update(self, buckets, combo):
+    def update(self, combo):
         self.rect.x -= self.vel_x
         self.rect.y += self.vel_y
 
@@ -89,7 +88,7 @@ class Bucket(pygame.sprite.Sprite):
             self.vel_y = -25
             self.is_jumping = True
 
-    def update(self, banana):
+    def update(self):
         self.rect.y += self.vel_y
 
         if self.rect.bottom < SCREEN_HEIGHT:
@@ -118,20 +117,15 @@ class Game():
         score = 0
         combo = 0
 
-        all_buckets = pygame.sprite.RenderPlain()
-        all_bananas = pygame.sprite.RenderPlain()
+        buckets = pygame.sprite.RenderPlain()
+        bananas = pygame.sprite.RenderPlain()
 
-        # Create bucket list
-        buckets = []
-
+        # Create the buckets
         start = 100
         for i in range(0, 3):
-            buckets.append(Bucket(start/2 + 2*start*i, SCREEN_HEIGHT))
-            all_buckets.add(buckets[i])
+            buckets.add(Bucket(start/2 + 2*start*i, SCREEN_HEIGHT))
 
-        # Create banana list
-        bananas = []
-
+        # Main game loop
         while done == False:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -146,22 +140,23 @@ class Game():
 
             screen.fill(WHITE)
 
-            combo = banana.update(buckets, combo)
-            all_buckets.update(banana)
+            combo = bananas.update(combo)
+            buckets.update()
 
-            for bucket in buckets:
-                # this will need to be updated
-                collide = pygame.Rect.colliderect(banana.rect, bucket.hitbox)
+#             for bucket in buckets:
+#                 # this will need to be updated
+#                 collide = pygame.Rect.colliderect(banana.rect, bucket.hitbox)
+# 
+#                 if collide:
+#                     if bucket.is_jumping:
+#                         if banana.is_good:
+#                             combo += 1
+#                             score += bucket.value + 2 * combo
+#                         else:
+#                             combo = 0
 
-                if collide:
-                    if bucket.is_jumping:
-                        if banana.is_good:
-                            combo += 1
-                            score += bucket.value + 2 * combo
-                        else:
-                            combo = 0
-
-            all_buckets.draw(screen)
+            buckets.draw(screen)
+            bananas.draw(screen)
 
             font = pygame.font.Font(None, 30)
 
