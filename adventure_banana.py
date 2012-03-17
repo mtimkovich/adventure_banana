@@ -26,9 +26,7 @@ class Banana(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
 
-        self.reset()
 
-    def reset(self):
         # There is a 1 in 10 chance of a bad banana
 #         self.good = random.randint(0, 10)
         self.good = random.randint(0, 2)
@@ -58,7 +56,7 @@ class Banana(pygame.sprite.Sprite):
             if self.is_good:
                 combo = 0
 
-            self.reset()
+            self.kill()
 
         return combo
 
@@ -120,19 +118,19 @@ class Game():
         score = 0
         combo = 0
 
-        all_sprites = pygame.sprite.RenderPlain()
         all_buckets = pygame.sprite.RenderPlain()
+        all_bananas = pygame.sprite.RenderPlain()
 
+        # Create bucket list
         buckets = []
 
         start = 100
         for i in range(0, 3):
             buckets.append(Bucket(start/2 + 2*start*i, SCREEN_HEIGHT))
             all_buckets.add(buckets[i])
-            all_sprites.add(buckets[i])
 
-        banana = Banana()
-        all_sprites.add(banana)
+        # Create banana list
+        bananas = []
 
         while done == False:
             for event in pygame.event.get():
@@ -152,6 +150,7 @@ class Game():
             all_buckets.update(banana)
 
             for bucket in buckets:
+                # this will need to be updated
                 collide = pygame.Rect.colliderect(banana.rect, bucket.hitbox)
 
                 if collide:
@@ -162,9 +161,7 @@ class Game():
                         else:
                             combo = 0
 
-                        banana.reset()
-
-            all_sprites.draw(screen)
+            all_buckets.draw(screen)
 
             font = pygame.font.Font(None, 30)
 
