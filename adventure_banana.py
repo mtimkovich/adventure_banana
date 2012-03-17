@@ -21,7 +21,7 @@ class Banana(pygame.sprite.Sprite):
     width = 45
     height = 45
 
-    def __init__(self):
+    def __init__(self, num_of_buckets):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([self.width, self.height])
 
@@ -29,14 +29,17 @@ class Banana(pygame.sprite.Sprite):
 
         # There is a 1 in 10 chance of a bad banana
 #         self.good = random.randint(0, 10)
-        self.good = random.randint(0, 2)
+        self.good = random.randint(0, 3)
 
-        if self.good != 0:
-            self.image.fill(YELLOW)
-            self.is_good = True
-        else:
+        if num_of_buckets < 3 and self.good == 1:
+            self.image.fill(PINK)
+            self.type = "heart"
+        elif self.good == 0:
             self.image.fill(BROWN)
-            self.is_good = False
+            self.type = "bad"
+        else:
+            self.image.fill(YELLOW)
+            self.type = "good"
 
         self.rect.x = SCREEN_WIDTH - self.width
         self.rect.y = SCREEN_HEIGHT / 1.8
@@ -55,7 +58,7 @@ class Banana(pygame.sprite.Sprite):
         if self.rect.x < 0 or self.rect.y > SCREEN_HEIGHT:
             self.kill()
 
-            if self.is_good:
+            if self.type != "bad":
                 return False
 
         return True
@@ -144,7 +147,7 @@ class Game():
             screen.fill(WHITE)
 
             if tick == 0:
-                banana = Banana()
+                banana = Banana(len(buckets))
                 bananas.add(banana)
 
             for banana in bananas:
@@ -161,15 +164,17 @@ class Game():
 
                     if collide:
                         if bucket.is_jumping:
-                            if banana.is_good:
-                                banana.kill()
-
+                            if banana.type == "good":
                                 combo += 1
                                 score += bucket.value + combo
-                            else:
+                            elif banana.type == "bad":
                                 bucket.kill()
 
                                 combo = 0
+                            elif banana.type == "heart":
+                                print "+1 bucket"
+
+                            banana.kill()
 
             buckets.draw(screen)
             bananas.draw(screen)
