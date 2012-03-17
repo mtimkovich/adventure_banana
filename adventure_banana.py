@@ -72,7 +72,7 @@ class Bucket(pygame.sprite.Sprite):
 
     points = 10
     
-    def __init__(self, x, y):
+    def __init__(self, x, offset = 0):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([self.width, self.height])
         self.image.fill(BLACK)
@@ -80,7 +80,7 @@ class Bucket(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         self.rect.x = x
-        self.rect.y = y - self.height
+        self.rect.bottom = SCREEN_HEIGHT - offset
 
         self.hitbox = pygame.Rect(self.rect.left, self.rect.top, self.width, self.height/3)
 
@@ -127,7 +127,9 @@ class Game():
         # Create the buckets
         start = 100
         for i in range(0, 3):
-            buckets.add(Bucket(start/2 + 2*start*i, SCREEN_HEIGHT))
+            buckets.add(Bucket(start/2 + 2*start*i))
+
+        dead_bucket_coor = []
 
         tick = 0
 
@@ -168,11 +170,15 @@ class Game():
                                 combo += 1
                                 score += bucket.value + combo
                             elif banana.type == "bad":
+                                dead_bucket_coor.append(bucket.rect.x)
+
                                 bucket.kill()
 
                                 combo = 0
                             elif banana.type == "heart":
-                                print "+1 bucket"
+                                buckets.add(Bucket(dead_bucket_coor[0], 100))
+
+                                dead_bucket_coor.pop(0)
 
                             banana.kill()
 
