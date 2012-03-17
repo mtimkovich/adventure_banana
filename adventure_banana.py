@@ -88,7 +88,7 @@ class Bucket(pygame.sprite.Sprite):
 
     def jump(self):
         if self.rect.bottom == SCREEN_HEIGHT:
-            self.vel_y = -30
+            self.vel_y = -25
             self.is_jumping = True
 
     def update(self, banana):
@@ -125,7 +125,7 @@ class Game():
 
         buckets = []
 
-        start = 75
+        start = 100
         for i in range(0, 3):
             buckets.append(Bucket(start/2 + 2*start*i, SCREEN_HEIGHT))
             all_buckets.add(buckets[i])
