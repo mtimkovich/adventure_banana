@@ -164,8 +164,10 @@ class Game():
                                 banana.kill()
 
                                 combo += 1
-                                score += bucket.value + 2 * combo
+                                score += bucket.value + combo
                             else:
+                                bucket.kill()
+
                                 combo = 0
 
             buckets.draw(screen)
