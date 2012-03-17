@@ -29,12 +29,12 @@ class Banana(pygame.sprite.Sprite):
 
         # There is a 1 in 10 chance of a bad banana
 #         self.good = random.randint(0, 10)
-        self.good = random.randint(0, 3)
+        r = random.randint(0, 3)
 
-        if num_of_buckets < 3 and self.good == 1:
+        if num_of_buckets < 3 and r == 1:
             self.image.fill(PINK)
             self.type = "heart"
-        elif self.good == 0:
+        elif r == 0:
             self.image.fill(BROWN)
             self.type = "bad"
         else:
@@ -69,6 +69,7 @@ class Bucket(pygame.sprite.Sprite):
 
     vel_y = 0
     is_jumping = False
+    dead = False
 
     points = 10
     
@@ -87,6 +88,9 @@ class Bucket(pygame.sprite.Sprite):
         self.value = Bucket.points
         Bucket.points += 10
 
+    def die(self):
+        self.dead = True
+
     def jump(self):
         if self.rect.bottom == SCREEN_HEIGHT:
             self.vel_y = -25
@@ -98,9 +102,15 @@ class Bucket(pygame.sprite.Sprite):
         if self.rect.bottom < SCREEN_HEIGHT:
             self.vel_y += GRAVITY
         else:
-            self.rect.bottom = SCREEN_HEIGHT
-            self.vel_y = 0
-            self.is_jumping = False
+            if not self.dead:
+                self.rect.bottom = SCREEN_HEIGHT
+                self.vel_y = 0
+                self.is_jumping = False
+            else:
+                self.vel_y += GRAVITY
+
+                if self.rect.top > SCREEN_HEIGHT:
+                    self.kill()
 
         self.hitbox.top = self.rect.top
 
@@ -172,7 +182,7 @@ class Game():
                             elif banana.type == "bad":
                                 dead_bucket_coor.append(bucket.rect.x)
 
-                                bucket.kill()
+                                bucket.die()
 
                                 combo = 0
                             elif banana.type == "heart":
