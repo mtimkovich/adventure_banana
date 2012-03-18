@@ -187,9 +187,10 @@ class Game():
 
                                 combo = 0
                             elif banana.type == "heart":
-                                buckets.add(Bucket(dead_bucket_coor[0], 100))
+                                if len(buckets) < 3:
+                                    buckets.add(Bucket(dead_bucket_coor[0], 100))
 
-                                dead_bucket_coor.pop(0)
+                                    dead_bucket_coor.pop(0)
 
                             banana.kill()
 
