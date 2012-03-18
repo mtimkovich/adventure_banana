@@ -88,6 +88,10 @@ class Bucket(pygame.sprite.Sprite):
         self.value = Bucket.points
         Bucket.points += 10
 
+    def die(self):
+        self.dead = True
+        self.is_jumping = False
+
     def jump(self):
         if self.rect.bottom == SCREEN_HEIGHT:
             self.vel_y = -25
@@ -179,7 +183,7 @@ class Game():
                             elif banana.type == "bad":
                                 dead_bucket_coor.append(bucket.rect.x)
 
-                                bucket.dead = True
+                                bucket.die()
 
                                 combo = 0
                             elif banana.type == "heart":
@@ -192,13 +196,13 @@ class Game():
             buckets.draw(screen)
             bananas.draw(screen)
 
-            font = pygame.font.Font(None, 30)
+            font = pygame.font.Font("DroidSans.ttf", 20)
 
             if combo >= 0:
                 text = font.render("Combo: " + str(combo), True, RED)
                 screen.blit(text, [SCREEN_WIDTH/3, SCREEN_HEIGHT/3])
 
-            font = pygame.font.Font(None, 50)
+            font = pygame.font.Font("DroidSans.ttf", 30)
 
             # Print the score on to the screen
             text = font.render("Score: " + str(score), True, BLACK)
