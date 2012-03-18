@@ -88,9 +88,6 @@ class Bucket(pygame.sprite.Sprite):
         self.value = Bucket.points
         Bucket.points += 10
 
-    def die(self):
-        self.dead = True
-
     def jump(self):
         if self.rect.bottom == SCREEN_HEIGHT:
             self.vel_y = -25
@@ -182,7 +179,7 @@ class Game():
                             elif banana.type == "bad":
                                 dead_bucket_coor.append(bucket.rect.x)
 
-                                bucket.die()
+                                bucket.dead = True
 
                                 combo = 0
                             elif banana.type == "heart":
