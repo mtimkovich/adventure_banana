@@ -18,17 +18,13 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 class Banana(pygame.sprite.Sprite):
-    width = 45
-    height = 45
 
     def __init__(self, num_of_buckets):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([self.width, self.height])
+        self.width = 45
+        self.height = 45
 
-        self.rect = self.image.get_rect()
-
-        # There is a 1 in 10 chance of a bad banana
-#         self.good = random.randint(0, 10)
+#          There is a 1 in 10 chance of a bad banana
+#          self.good = random.randint(0, 10)
         r = random.randint(0, 3)
 
         if num_of_buckets < 3 and r == 1:
@@ -40,6 +36,12 @@ class Banana(pygame.sprite.Sprite):
         else:
             self.image.fill(YELLOW)
             self.type = "good"
+
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([self.width, self.height])
+
+        self.rect = self.image.get_rect()
+
 
         self.rect.x = SCREEN_WIDTH - self.width
         self.rect.y = SCREEN_HEIGHT / 1.8
@@ -64,16 +66,17 @@ class Banana(pygame.sprite.Sprite):
         return True
 
 class Bucket(pygame.sprite.Sprite):
-    width = 100
-    height = 150
-
-    vel_y = 0
-    is_jumping = False
-    dead = False
-
-    points = 10
     
     def __init__(self, x, offset = 0):
+        self.width = 100
+        self.height = 150
+
+        self.vel_y = 0
+        self.is_jumping = False
+        self.dead = False
+
+        self.points = 10
+
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([self.width, self.height])
         self.image.fill(BLACK)
