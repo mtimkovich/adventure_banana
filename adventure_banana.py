@@ -23,6 +23,8 @@ class Banana(pygame.sprite.Sprite):
         self.width = 45
         self.height = 45
 
+        self.image = pygame.Surface([self.width, self.height])
+
 #          There is a 1 in 10 chance of a bad banana
 #          self.good = random.randint(0, 10)
         r = random.randint(0, 3)
@@ -38,7 +40,6 @@ class Banana(pygame.sprite.Sprite):
             self.type = "good"
 
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([self.width, self.height])
 
         self.rect = self.image.get_rect()
 
@@ -66,6 +67,8 @@ class Banana(pygame.sprite.Sprite):
         return True
 
 class Bucket(pygame.sprite.Sprite):
+
+    points = 10
     
     def __init__(self, x, offset = 0):
         self.width = 100
